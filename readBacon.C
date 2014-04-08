@@ -45,23 +45,22 @@ using namespace std;
 using namespace fastjet;
 using namespace baconhep;
 
-void readBacon(){//main programme
-
-        TH1F *h1=new TH1F("h","hist",100,-50,50);
+void readBacon(char *bs=NULL,std::string start="0",std::string end="0"){//main programme
+       /// char *bs=NULL; 
 
 
 /////Enter here the relevent informations about jets and algos////////
 //////////User Entry Box start////////////////
 //***Enter ConeRadius BELOW
         double R[15] = {0};//define what cone radius jets you want to use
-        R[0]=0.8;
-        //R[1]=0.35; 
-        //R[2]=0.4;
+        R[0]=1.2;
+      //  R[1]=1.2;
+      //  R[2]=1.2;
         //R[3]=0.45;
 
 
-        //***Enter total No of variables  BELOW
-        int NoOfVariables=52;//Enter here the total no varibles you want to store ,like pt ,eta,phi.
+        //***Enter total No of variables BELOW
+        int NoOfVariables=53;//Enter here the total no varibles you want to store ,like pt ,eta,phi.
 
 
         //below here enter the GlobalTag
@@ -126,8 +125,8 @@ void readBacon(){//main programme
 
         VarType[50]="qjetmass";
         VarType[51]="qjet_massdrop";
-
-        //****Enter the type of jet algorithm  BELOW
+        VarType[52]="n_PV"; 
+        //****Enter the type of jet algorithm BELOW
         string JetAlgorithm = "AK";///write AK for antikt,KT for kt ,CA for cambridgeAchen ,one algo is possible at a time for now
         //****Enter the following contants BELOW
         int activeAreaRepeats = 1;
@@ -149,7 +148,7 @@ void readBacon(){//main programme
         string Rs[NoOfdiffRJets];//a string array for storing the R values
         ///finds the no of different R jets to be reclustered
 
-        ///converts Jet R values to  string 
+        ///converts Jet R values to string
         std::ostringstream os[NoOfdiffRJets];
         for(int ii=0;ii<NoOfdiffRJets;ii++){//3
         os[ii] << R[ii];
@@ -158,7 +157,7 @@ void readBacon(){//main programme
         for(int i=0;i<NoOfdiffRJets;i++){//4//stores the string values of R in a string array
         std::string str = os[i].str();
         Rs[i]=str;
-        cout<<"double to string=  "<<Rs[i]<<endl;
+        cout<<"double to string= "<<Rs[i]<<endl;
         }//4
 
 
@@ -166,11 +165,11 @@ void readBacon(){//main programme
         ofstream write;
         write.open("BranchNames.txt");
         for(int jj=0;jj<NoOfdiffRJets;jj++){//5
-        //if you want to create a new branch create a new string as its name 
+        //if you want to create a new branch create a new string as its name
 
           for(int n=0;n<NoOfVariables;n++){//6
           BranchName[n]="GroomedJet_"+JetAlgorithm+Rs[jj]+"_"+VarType[n];
-          write<<BranchName[n]<<endl; 
+          write<<BranchName[n]<<endl;
           } //6
 
         }//5
@@ -179,61 +178,86 @@ void readBacon(){//main programme
         int NoOfBranches = NoOfdiffRJets*NoOfVariables;
 
 
-        ///reads the names of branches  from the file and makes branches 
+        ///reads the names of branches from the file and makes branches
         ifstream infile("BranchNames.txt");
-        TFile *f = new TFile("BaconGroomedJets.root","RECREATE");
+        
+        const char *startchar;
+        const char *endchar; 
+        startchar = start.c_str();
+        endchar   =end.c_str();
+        char outputfileName[100];
+ 
+        sprintf(outputfileName, "QCDptEvent%sto%s.root", startchar, endchar);
+
+
+
+
+        TFile *f = new TFile(outputfileName,"RECREATE");
         TTree *tr = new TTree("GroomedJets","bacon groomed jets");
-        std::vector<double> b[NoOfBranches];  //create no of  vectors equals to NoOfBranches
+        int n_PVertex;
+        tr->Branch("n_PVertex",&n_PVertex,"n_PVertex/I");
+        std::vector<double> b[NoOfBranches]; //create no of vectors equals to NoOfBranches
         TBranch *B[5*NoOfBranches];// = new TBranch("branch1",&b);
         char s[NoOfBranches];
         for(int i=0; i<NoOfBranches; i++){ //7, branch create loop
         infile>>s;
-        cout<<"creating a branch named .........       "<<s<<endl;
+        cout<<"creating a branch named ......... "<<s<<endl;
         B[i] = tr->Branch(s,&b[i]);
 
         }//7,branch create loop
-        ///reads the names of branches  from the file and makes branches
+        ///reads the names of branches from the file and makes branches
 
 
-///////STARTS  READING THE EXPERT NTUPLE////////////
+///////STARTS READING THE EXPERT NTUPLE////////////
 //////////////////////////////////////////////////
+	 
+	char buff[50]; // buff is large enough to hold the entire formatted string
+	sprintf(buff, "%s", bs);
+       int startNumber = atoi(start.c_str()); 
+       int endNumber = atoi(end.c_str()); 
 
-        TFile* fIn = new TFile("/afs/cern.ch/user/b/bmahakud/work/NewBaconFramework/CMSSW_5_3_13/src/BaconProd/Ntupler/python/ntuple.root");
+
+
+        TFile* fIn = new TFile(buff);
         TTree* tree = (TTree*) fIn->Get("Events");
         TClonesArray *fPFPart = new TClonesArray("baconhep::TPFPart");
         TClonesArray *fGenPart = new TClonesArray("baconhep::TGenParticle");
-        TClonesArray *fVertex  = new TClonesArray("baconhep::TVertex");   
+        TClonesArray *fVertex = new TClonesArray("baconhep::TVertex");
      
         tree->SetBranchAddress("PFPart", &fPFPart);
         tree->SetBranchAddress("GenParticle", &fGenPart);
         tree->SetBranchAddress("PV",&fVertex);
         /////////////////////////////////////////////////////////////////
         cout <<"total no of events = "<<tree->GetEntriesFast()<<endl;
-        for(int i0 = 0; i0 < tree->GetEntriesFast(); i0++) { //8, event loop
+        for(int i0 = startNumber; i0 < endNumber/*tree->GetEntriesFast()*/; i0++) { //8, event loop
+          //     if(i0==start){
+          // break;
+          // }
+        if(i0%10==0)cout<<"Evt = "<<i0<<endl;
           for(int ij=0;ij<NoOfBranches;ij++){//clear the vectors before each event loop
                                 b[ij].clear();
-                                             }//clear the vectors before each event loop     
+                                             }//clear the vectors before each event loop
         tree->GetEntry(i0);
-
+        n_PVertex = fVertex->GetEntries();
         //From this PFpartcile stuff begins
         //////////////////////////////////////////////////////////////////////////////////////////////&&&&&&&&
-        std::vector<fastjet::PseudoJet> particles;  particles.clear();       
-        for( int i1 = 0; i1 < fPFPart->GetEntriesFast(); i1++){//9,entries loop,fill the vector particles with PF particles 
+        std::vector<fastjet::PseudoJet> particles; particles.clear();
+        for( int i1 = 0; i1 < fPFPart->GetEntriesFast(); i1++){//9,entries loop,fill the vector particles with PF particles
             baconhep::TPFPart *pPartTmp = (baconhep::TPFPart*)((*fPFPart)[i1]);
 
         double Px=pPartTmp->pt*cos(pPartTmp->phi);
         double Py= pPartTmp->pt*sin(pPartTmp->phi);
-        double theta = 2*atan(exp(-pPartTmp->eta));   //eta = -ln(tan(theta/2))
-	double Pz = pPartTmp->pt/tan(theta);
+        double theta = 2*atan(exp(-pPartTmp->eta)); //eta = -ln(tan(theta/2))
+        double Pz = pPartTmp->pt/tan(theta);
         double E = pPartTmp->e;
         double pdgId = pPartTmp->pfType;
-        int    charge = pPartTmp->q;
+        int charge = pPartTmp->q;
         fastjet::PseudoJet tmp_psjet(Px, Py, Pz, E);
-        tmp_psjet.set_user_info( new PseudoJetUserInfo(pdgId, charge) ); 
+        tmp_psjet.set_user_info( new PseudoJetUserInfo(pdgId, charge) );
         particles.push_back(tmp_psjet);
   
 
-        }//9,entries loop  ,fill the vector particles with PFparticles 
+        }//9,entries loop ,fill the vector particles with PFparticles
         ////////////////////////////////////////////////////////////////////////////////////////////////////&&&&&&&&&
 
         ////////////////////////////////Read Jec txt files
@@ -244,9 +268,9 @@ void readBacon(){//main programme
         jecStr.push_back(GlobalTag+"_L2Relative_AK7PF.txt");
         jecStr.push_back(GlobalTag+"_L3Absolute_AK7PF.txt");
 
-        JetCorrectorParameters *L1JetPar  = new JetCorrectorParameters(GlobalTag+"_L1FastJet_AK7PF.txt");
-        JetCorrectorParameters *L2JetPar  = new JetCorrectorParameters(GlobalTag+"_L2Relative_AK7PF.txt");
-        JetCorrectorParameters *L3JetPar  = new JetCorrectorParameters(GlobalTag+"_L3Absolute_AK7PF.txt");
+        JetCorrectorParameters *L1JetPar = new JetCorrectorParameters(GlobalTag+"_L1FastJet_AK7PF.txt");
+        JetCorrectorParameters *L2JetPar = new JetCorrectorParameters(GlobalTag+"_L2Relative_AK7PF.txt");
+        JetCorrectorParameters *L3JetPar = new JetCorrectorParameters(GlobalTag+"_L3Absolute_AK7PF.txt");
 
         jecPars.push_back(*L1JetPar);
         jecPars.push_back(*L2JetPar);
@@ -261,10 +285,10 @@ void readBacon(){//main programme
         fastjet::GridMedianBackgroundEstimator* mBgeGrid;
         fastjet::Subtractor* subtractor;
         subtractor=NULL;
-	mBgeGrid= new fastjet::GridMedianBackgroundEstimator(rhoEtaMax, 0.55);
-	mBgeGrid->set_particles(particles);
-	if(subtractor) delete subtractor;
-	subtractor= new fastjet::Subtractor(mBgeGrid);
+        mBgeGrid= new fastjet::GridMedianBackgroundEstimator(rhoEtaMax, 0.55);
+        mBgeGrid->set_particles(particles);
+        if(subtractor) delete subtractor;
+        subtractor= new fastjet::Subtractor(mBgeGrid);
         double rhoVal_grid=mBgeGrid->rho();
        // h1->Fill(rhoVal_grid);
 
@@ -276,21 +300,21 @@ void readBacon(){//main programme
         fastjet::AreaDefinition *mAreaDefinition;
         mAreaDefinition =new fastjet::AreaDefinition( fastjet::active_area_explicit_ghosts, fjActiveArea );
         fastjet::Selector selected_eta = fastjet::SelectorAbsEtaMax(2.4);
-        ///////reclustering starts from here//////////////////////////////////////////// 
+        ///////reclustering starts from here////////////////////////////////////////////
 
-        for(int jjj=0;jjj<NoOfdiffRJets;jjj++){//9,loop over the diff cone radius  
+        for(int jjj=0;jjj<NoOfdiffRJets;jjj++){//9,loop over the diff cone radius
         JetDefinition jet_def(antikt_algorithm,R[jjj]);
 
 
-	if (JetAlgorithm == "AK")jet_def.set_jet_algorithm( fastjet::antikt_algorithm );
+if (JetAlgorithm == "AK")jet_def.set_jet_algorithm( fastjet::antikt_algorithm );
           else if (JetAlgorithm == "CA")jet_def.set_jet_algorithm( fastjet::cambridge_algorithm );
-	  else if (JetAlgorithm == "KT")jet_def.set_jet_algorithm( fastjet::kt_algorithm );
-	//else throw  << " unknown jet algorithm " << std::endl;
+else if (JetAlgorithm == "KT")jet_def.set_jet_algorithm( fastjet::kt_algorithm );
+//else throw << " unknown jet algorithm " << std::endl;
 
         fastjet::ClusterSequenceArea thisClustering_area(particles, jet_def, *mAreaDefinition);
         fastjet::ClusterSequence thisClustering_basic(particles, jet_def);
 
-        std::vector<fastjet::PseudoJet> out_jets  = sorted_by_pt( selected_eta(thisClustering_area.inclusive_jets(15.0)) );
+        std::vector<fastjet::PseudoJet> out_jets = sorted_by_pt( selected_eta(thisClustering_area.inclusive_jets(15.0)) );
         std::vector<fastjet::PseudoJet> out_jets_basic = sorted_by_pt( selected_eta(thisClustering_basic.inclusive_jets(15.0)) );
    
         fastjet::Filter trimmer(fastjet::Filter(fastjet::JetDefinition(fastjet::kt_algorithm,0.2),fastjet::SelectorPtFractionMin(0.03)));
@@ -314,13 +338,13 @@ void readBacon(){//main programme
 
           if(j==0){//11
             if (out_jets_basic.at(j).constituents().size() >= 100) nconstituents0 = 100;
-		else nconstituents0 = (int) out_jets_basic.at(j).constituents().size();
-		std::vector<fastjet::PseudoJet> cur_constituents = sorted_by_pt(out_jets_basic.at(j).constituents());
-		  for (int aa = 0; aa < nconstituents0; aa++){ //10       
-			//	constituents0_eta[aa] = cur_constituents.at(aa).eta();
-			//	constituents0_phi[aa] = cur_constituents.at(aa).phi();                
-			//	constituents0_e[aa] = cur_constituents.at(aa).e();                                
-			} //10                
+else nconstituents0 = (int) out_jets_basic.at(j).constituents().size();
+std::vector<fastjet::PseudoJet> cur_constituents = sorted_by_pt(out_jets_basic.at(j).constituents());
+for (int aa = 0; aa < nconstituents0; aa++){ //10
+// constituents0_eta[aa] = cur_constituents.at(aa).eta();
+// constituents0_phi[aa] = cur_constituents.at(aa).phi();
+// constituents0_e[aa] = cur_constituents.at(aa).e();
+} //10
 
                   }//11
 
@@ -331,12 +355,12 @@ void readBacon(){//main programme
         b[11+(jjj*NoOfVariables)].push_back(out_jets.at(j).phi());
 
         jec_->setJetEta( out_jets.at(j).eta() );
-	jec_->setJetPt ( out_jets.at(j).pt() );
-	jec_->setJetE  ( out_jets.at(j).e() );
-	jec_->setJetA  ( out_jets.at(j).area() );
-	jec_->setRho   ( rhoVal_grid );
-	jec_->setNPV   ( fVertex->GetEntriesFast() );
-
+jec_->setJetPt ( out_jets.at(j).pt() );
+jec_->setJetE ( out_jets.at(j).e() );
+jec_->setJetA ( out_jets.at(j).area() );
+jec_->setRho ( rhoVal_grid );
+jec_->setNPV ( fVertex->GetEntriesFast() );
+b[52+(jjj*NoOfVariables)].push_back(fVertex->GetEntries());
         double corr = jec_->getCorrection();
         TLorentzVector jet_corr(corr*(out_jets.at(j).px()),corr*(out_jets.at(j).py()),corr*(out_jets.at(j).pz()),corr*(out_jets.at(j).e()));
 
@@ -349,19 +373,19 @@ void readBacon(){//main programme
         //cout <<"size trans "<<transformers.size()<<endl;
         //cout <<"End trans "<<transformers.end()<<endl;
         int transctr = 0;
-        for ( std::vector<fastjet::Transformer const *>::const_iterator 
-	   itransf = transformers.begin(), itransfEnd = transformers.end(); 
-	   itransf != itransfEnd; ++itransf ) {//transformed jet
+        for ( std::vector<fastjet::Transformer const *>::const_iterator
+itransf = transformers.begin(), itransfEnd = transformers.end();
+itransf != itransfEnd; ++itransf ) {//transformed jet
 
            fastjet::PseudoJet transformedJet = out_jets.at(j);
-	   transformedJet = (**itransf)(transformedJet);
+transformedJet = (**itransf)(transformedJet);
 
- 	   fastjet::PseudoJet transformedJet_basic = out_jets_basic.at(j);
-	   transformedJet_basic = (**itransf)(transformedJet_basic);
-                 if (transctr == 0){//12  Trimmer
+  fastjet::PseudoJet transformedJet_basic = out_jets_basic.at(j);
+transformedJet_basic = (**itransf)(transformedJet_basic);
+                 if (transctr == 0){//12 Trimmer
                     b[3+(jjj*NoOfVariables)].push_back(transformedJet.m());
                     b[4+(jjj*NoOfVariables)].push_back(transformedJet.pt());
-                    TLorentzVector jet_tr_corr(corr*(transformedJet.px()),corr*(transformedJet.py()),corr*(transformedJet.pz()),corr*(transformedJet.e()));                 
+                    TLorentzVector jet_tr_corr(corr*(transformedJet.px()),corr*(transformedJet.py()),corr*(transformedJet.pz()),corr*(transformedJet.e()));
 
                     b[17+(jjj*NoOfVariables)].push_back(jet_tr_corr.M());
                     b[18+(jjj*NoOfVariables)].push_back(jet_tr_corr.Pt());
@@ -371,11 +395,11 @@ void readBacon(){//main programme
                     b[22+(jjj*NoOfVariables)].push_back(transformedJet.area());
 
 
-                    }//12   
+                    }//12
 
                  else if (transctr ==1 ){//Filter
                    b[5+(jjj*NoOfVariables)].push_back(transformedJet.m());
-                   b[6+(jjj*NoOfVariables)].push_back(transformedJet.pt());                                                                
+                   b[6+(jjj*NoOfVariables)].push_back(transformedJet.pt());
                    TLorentzVector jet_ft_corr(corr*(transformedJet.px()),corr*(transformedJet.py()),corr*(transformedJet.pz()),corr*(transformedJet.e()));
                                            
                    b[23+(jjj*NoOfVariables)].push_back(jet_ft_corr.M());
@@ -396,10 +420,10 @@ void readBacon(){//main programme
                    b[31+(jjj*NoOfVariables)].push_back(jet_pr_corr.Eta());
                    b[32+(jjj*NoOfVariables)].push_back(jet_pr_corr.Phi());
                    b[33+(jjj*NoOfVariables)].push_back(jet_pr_corr.Energy());
-                   b[34+(jjj*NoOfVariables)].push_back(transformedJet.area());                   
+                   b[34+(jjj*NoOfVariables)].push_back(transformedJet.area());
 
 
-//decompose into requested no of subjets                                
+//decompose into requested no of subjets
                    if (transformedJet_basic.constituents().size() > 1){//15 decompose
 
                    int nsubjetstokeep = 2;
@@ -425,7 +449,7 @@ void readBacon(){//main programme
             b[43+(jjj*NoOfVariables)].push_back(subjets.at(0).m()/transformedJet.m());
             b[44+(jjj*NoOfVariables)].push_back(subjets.at(0).m()/jet_pr_corr.M());
 
-           }   //16
+           } //16
            else {//17
             b[43+(jjj*NoOfVariables)].push_back(subjets.at(0).m()/transformedJet.m());
             b[44+(jjj*NoOfVariables)].push_back(subjets.at(0).m()/jet_pr_corr.M());
@@ -443,14 +467,14 @@ void readBacon(){//main programme
         double mNsubjettinessKappa=1;
         float tau1,tau2,tau3,tau4,tau2tau1;
 
-        double beta = mNsubjettinessKappa; // power for angular dependence, e.g. beta = 1 --> linear k-means, beta = 2 --> quadrat        ic/classic k-means
-        double R0 = R[jjj]; // Characteristic jet radius for normalization	      
+        double beta = mNsubjettinessKappa; // power for angular dependence, e.g. beta = 1 --> linear k-means, beta = 2 --> quadrat ic/classic k-means
+        double R0 = R[jjj]; // Characteristic jet radius for normalization
         double Rcut = R[jjj]; // maximum R particles can be from axis to be included in jet
 
         fastjet::Nsubjettiness nSub1KT(1, Njettiness::onepass_kt_axes, beta, R0, Rcut);
-	fastjet::Nsubjettiness nSub2KT(2, Njettiness::onepass_kt_axes, beta, R0, Rcut);
-	fastjet::Nsubjettiness nSub3KT(3, Njettiness::onepass_kt_axes, beta, R0, Rcut);
-	fastjet::Nsubjettiness nSub4KT(4, Njettiness::onepass_kt_axes, beta, R0, Rcut);
+fastjet::Nsubjettiness nSub2KT(2, Njettiness::onepass_kt_axes, beta, R0, Rcut);
+fastjet::Nsubjettiness nSub3KT(3, Njettiness::onepass_kt_axes, beta, R0, Rcut);
+fastjet::Nsubjettiness nSub4KT(4, Njettiness::onepass_kt_axes, beta, R0, Rcut);
 
         tau1 = nSub1KT(out_jets.at(j));
         tau2 = nSub2KT(out_jets.at(j));
@@ -465,39 +489,39 @@ void readBacon(){//main programme
   
 
 
-        // cores computation  -------------
-		// Begining the core computation
-		std::vector<fastjet::PseudoJet> constits = thisClustering_area.constituents(out_jets.at(j));
-		for (int kk = 0; kk < 11; ++kk){
-			double coreCtr = (double) kk;    
-			if (coreCtr < R[jjj]*10.){
-				float m_core = 0, pt_core = 0;
+        // cores computation -------------
+// Begining the core computation
+std::vector<fastjet::PseudoJet> constits = thisClustering_area.constituents(out_jets.at(j));
+for (int kk = 0; kk < 11; ++kk){
+double coreCtr = (double) kk;
+if (coreCtr < R[jjj]*10.){
+float m_core = 0, pt_core = 0;
 
 
         fastjet::JetDefinition jetDef_rcore(fastjet::cambridge_algorithm, coreCtr/10.);
 
-	fastjet::ClusterSequence thisClustering(constits, jetDef_rcore);
+fastjet::ClusterSequence thisClustering(constits, jetDef_rcore);
         std::vector<fastjet::PseudoJet> out_jets_core = sorted_by_pt(thisClustering.inclusive_jets(0.0));
-	m_core = out_jets_core.at(0).m();
-	pt_core = out_jets_core.at(0).pt();	
+m_core = out_jets_core.at(0).m();
+pt_core = out_jets_core.at(0).pt();	
 
-			//	computeCore( constits, coreCtr/10., tmpm, tmppt );
-			//	if (m_core > 0) rcores[kk][j] = m_core/out_jets_core.at(j).m();
-			//	if (pt_core > 0) ptcores[kk][j] = pt_core/out_jets_core.at(j).pt();
-			}
-		}
+// computeCore( constits, coreCtr/10., tmpm, tmppt );
+// if (m_core > 0) rcores[kk][j] = m_core/out_jets_core.at(j).m();
+// if (pt_core > 0) ptcores[kk][j] = pt_core/out_jets_core.at(j).pt();
+}
+}
 
-		//std::cout<< "Ending the core computation" << endl;
+//std::cout<< "Ending the core computation" << endl;
 
 
 
         //Begining the planarflow computation
-		
+
 
         //Ending the planarflow computation
 
 
-        //begin qjets computation  -------------
+        //begin qjets computation -------------
 
         if(j==0){//do qjets only for the hardest jet in the event!
           double zcut(0.1), dcut_fctr(0.5), exp_min(0.), exp_max(0.), rigidity(0.1);
@@ -506,34 +530,34 @@ void readBacon(){//main programme
           fastjet::JetDefinition qjet_def(&qjet_plugin);
           vector<fastjet::PseudoJet> constitsq;
           unsigned int nqjetconstits = out_jets_basic.at(j).constituents().size();
-          int    mQJetsPreclustering=30;
+          int mQJetsPreclustering=30;
 
          if (nqjetconstits < (unsigned int) mQJetsPreclustering) constitsq = out_jets_basic.at(j).constituents();
-			else constitsq = out_jets_basic.at(j).associated_cluster_sequence()->exclusive_subjets_up_to(out_jets_basic.at(j),mQJetsPreclustering);
-        int  mQJetsN=50;
+else constitsq = out_jets_basic.at(j).associated_cluster_sequence()->exclusive_subjets_up_to(out_jets_basic.at(j),mQJetsPreclustering);
+        int mQJetsN=50;
         for(unsigned int ii = 0 ; ii < (unsigned int) mQJetsN ; ii++){//mQJetsN loop
         fastjet::ClusterSequence qjet_seq(constitsq, qjet_def);
-	vector<fastjet::PseudoJet> inclusive_jets2 = sorted_by_pt(qjet_seq.inclusive_jets(20.0));
+vector<fastjet::PseudoJet> inclusive_jets2 = sorted_by_pt(qjet_seq.inclusive_jets(20.0));
         if (inclusive_jets2.size()>0) {//20
-					b[50+(jjj*NoOfVariables)].push_back(inclusive_jets2[0].m());
-					if (inclusive_jets2[0].constituents().size() > 1){//21
-						vector<fastjet::PseudoJet> subjets_qjet = qjet_seq.exclusive_subjets(inclusive_jets2[0],2);
-						if (subjets_qjet.at(0).m() >= subjets_qjet.at(1).m()){//22
-							b[51+(jjj*NoOfVariables)].push_back( (subjets_qjet.at(0).m()/inclusive_jets2[0].m()));                        
-						}//22
-						else{//23
-						 b[51+(jjj*NoOfVariables)].push_back( (subjets_qjet.at(1).m()/inclusive_jets2[0].m()));                                    
-						}//23
-					}//21
-					else{//24
-						 b[51+(jjj*NoOfVariables)].push_back(1.);
-					}//24
-				}//20
+b[50+(jjj*NoOfVariables)].push_back(inclusive_jets2[0].m());
+if (inclusive_jets2[0].constituents().size() > 1){//21
+vector<fastjet::PseudoJet> subjets_qjet = qjet_seq.exclusive_subjets(inclusive_jets2[0],2);
+if (subjets_qjet.at(0).m() >= subjets_qjet.at(1).m()){//22
+b[51+(jjj*NoOfVariables)].push_back( (subjets_qjet.at(0).m()/inclusive_jets2[0].m()));
+}//22
+else{//23
+b[51+(jjj*NoOfVariables)].push_back( (subjets_qjet.at(1).m()/inclusive_jets2[0].m()));
+}//23
+}//21
+else{//24
+b[51+(jjj*NoOfVariables)].push_back(1.);
+}//24
+}//20
 
 
                        else{//19
-					b[51+(jjj*NoOfVariables)].push_back(1.);
-				}//19
+b[51+(jjj*NoOfVariables)].push_back(1.);
+}//19
 
         }//mQJetsN loop
 
@@ -541,7 +565,7 @@ void readBacon(){//main programme
         }//do qjets only for the hardest jet in the event!
 
 
-//end qjets computation   --------------
+//end qjets computation --------------
 
 
 
@@ -550,7 +574,7 @@ void readBacon(){//main programme
 
 tr->Fill();
 
-}//9, loop over diff cone radius 
+}//9, loop over diff cone radius
 
 }//8, event loop
 
