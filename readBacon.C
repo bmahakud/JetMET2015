@@ -16,6 +16,7 @@
 #include "JetSubstructure/SubstructureTools/interface/Nsubjettiness.hh"
 #include "JetSubstructure/SubstructureTools/src/QjetsPlugin.h"
 #include "fastjet/tools/Subtractor.hh"
+#include "fjcontrib-1.009/include/fastjet/contrib/SoftDrop.hh"
 //#include "JetMETCorrections/Objects/interface/JetCorrector.h"
 //#include "JetSubstructure/SubstructureTools/interface/JetSubstructureTools.h"
 #if !defined(__CINT__) && !defined(__MAKECINT__)
@@ -323,11 +324,26 @@ else if (JetAlgorithm == "KT")jet_def.set_jet_algorithm( fastjet::kt_algorithm )
   
         fastjet::Pruner pruner(fastjet::cambridge_algorithm, 0.1, 0.5);
 
-
+        double beta_sd = 1.0;
+        double zcut_sd = 0.1;
+        double mu_sd = 1.0;
+        contrib::SoftDropTagger soft_drop_mmdt(0.0, zcut_sd, mu_sd);
+        contrib::SoftDropTagger soft_drop_sdb2(2.0, zcut_sd, mu_sd);
+        contrib::SoftDropTagger soft_drop_sdm1(-1.0, zcut_sd, mu_sd);
+        
+        
+        
         std::vector<fastjet::Transformer const *> transformers;
         transformers.push_back(&trimmer);
         transformers.push_back(&filter);
         transformers.push_back(&pruner);
+
+
+
+
+
+
+
 
         int nconstituents0;
         int number_jet_central = out_jets.size();
