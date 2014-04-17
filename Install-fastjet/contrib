@@ -1,0 +1,14 @@
+export SCRAM_ARCH slc5_amd64_gcc462
+cd  CMSSW_5_3_13/src
+cmsenv
+wget http://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.009.tar.gz
+tar -xzvf fjcontrib-1.009.tar.gz
+cd fjcontrib-1.009
+svn checkout http://fastjet.hepforge.org/svn/contrib/contribs/SoftDrop/trunk SoftDrop
+export $FASTJET_BASE `scramv1 tool tag fastjet $FASTJET_BASE`
+./configure --fastjet-config=/afs/cern.ch/cms/slc5_amd64_gcc462/external/fastjet/3.0.1-cms3/bin/fastjet-config
+
+CXXFLAGS="-I$FASTJET_BASE/include -I$FASTJET_BASE/tools"
+make
+make check
+make install
