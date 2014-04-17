@@ -1,0 +1,13 @@
+################################################
+dlopen error: /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/./readBacon_C.so: undefined symbol: _ZTVN7fastjet7contrib14SoftDropTaggerE
+Load Error: Failed to load Dynamic link library /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/./readBacon_C.so
+
+
+.
+.
+.
+afs/cern.ch/cms/slc5_amd64_gcc462/external/gcc/4.6.2/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.6.2/../../../../x86_64-unknown-linux-gnu/bin/ld: /usr/lib/../lib64/crt1.o:(.text+0x20): error: undefined reference to 'main'
+/afs/cern.ch/cms/slc5_amd64_gcc462/external/gcc/4.6.2/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.6.2/../../../../x86_64-unknown-linux-gnu/bin/ld: /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/readBacon_C_ACLiC_dict.o: in function fastjet::contrib::SoftDropTagger::SoftDropTagger(double, double, double, double):readBacon_C_ACLiC_dict.cxx(.text._ZN7fastjet7contrib14SoftDropTaggerC2Edddd+0x33): error: undefined reference to 'vtable for fastjet::contrib::SoftDropTagger'
+/afs/cern.ch/cms/slc5_amd64_gcc462/external/gcc/4.6.2/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.6.2/../../../../x86_64-unknown-linux-gnu/bin/ld: /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/readBacon_C_ACLiC_dict.o: in function fastjet::contrib::SoftDropTagger::~SoftDropTagger():readBacon_C_ACLiC_dict.cxx(.text._ZN7fastjet7contrib14SoftDropTaggerD2Ev+0x13): error: undefined reference to 'vtable for fastjet::contrib::SoftDropTagger'
+collect2: ld returned 1 exit status
+##############################################
