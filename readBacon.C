@@ -44,6 +44,7 @@
 
 using namespace std;
 using namespace fastjet;
+using namespace fastjet::contrib;
 using namespace baconhep;
 
 void readBacon(char *bs=NULL,std::string start="0",std::string end="0"){//main programme
