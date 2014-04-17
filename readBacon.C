@@ -361,7 +361,7 @@ for (int aa = 0; aa < nconstituents0; aa++){ //10
 // constituents0_phi[aa] = cur_constituents.at(aa).phi();
 // constituents0_e[aa] = cur_constituents.at(aa).e();
 } //10
-
+//cout<<"soft drop jet mass = "<<soft_drop_mmdt( out_jets.at(j) ).m()<<endl;
                   }//11
 
         b[0+(jjj*NoOfVariables)].push_back(out_jets.at(j).pt());
