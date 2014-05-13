@@ -1,0 +1,56 @@
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00002b4d67695075 in waitpid () from /lib64/libc.so.6
+#1  0x00002b4d67637741 in do_system () from /lib64/libc.so.6
+#2  0x00002b4d65e8eaf0 in TUnixSystem::StackTrace() () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#3  0x00002b4d65e91333 in TUnixSystem::DispatchSignals(ESignals) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#4  <signal handler called>
+#5  _tj_set_jetinfo (_jets_index=0, jet=0x168bd070, this=0x7fff27aca090) at ClusterSequence_TiledN2.cc:205
+#6  fastjet::ClusterSequence::_minheap_faster_tiled_N2_cluster (this=0x7fff27aca090) at ClusterSequence_TiledN2.cc:744
+#7  0x00002b4d721fdba0 in fastjet::ClusterSequence::_initialise_and_run_no_decant (this=0x7fff27aca090) at ClusterSequence.cc:335
+#8  0x00002b4d722c1ac8 in fastjet::ClusterSequence::ClusterSequence<fastjet::PseudoJet> (this=0x7fff27aca090, pseudojets=std::vector of length 1661, capacity 2048 = {...}, jet_def_in=<optimized out>, writeout_combinations=<optimized out>) at /afs/cern.ch/cms/slc5_amd64_gcc462/external/fastjet/3.0.1-cms3/include/fastjet/ClusterSequence.hh:945
+#9  0x00002b4d73fda014 in readBacon() () from /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/./readBacon_C.so
+#10 0x00002b4d73fdf839 in G__readBacon_C_ACLiC_dict__0_4057(G__value*, char const*, G__param*, int) () from /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/./readBacon_C.so
+#11 0x00002b4d66422786 in Cint::G__ExceptionWrapper(int (*)(G__value*, char const*, G__param*, int), G__value*, char*, G__param*, int) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#12 0x00002b4d664cc541 in G__execute_call () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#13 0x00002b4d664cc8fe in G__call_cppfunc () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#14 0x00002b4d664acd92 in G__interpret_func () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#15 0x00002b4d6649c154 in G__getfunction () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#16 0x00002b4d66476ff9 in G__getitem () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#17 0x00002b4d6647cf26 in G__getexpr () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#18 0x00002b4d664fbfd5 in G__exec_statement () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#19 0x00002b4d66463140 in G__exec_tempfile_core () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#20 0x00002b4d664648ee in G__exec_tempfile_fp () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#21 0x00002b4d66508922 in G__process_cmd () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCint.so
+#22 0x00002b4d65e5925a in TCint::ProcessLine(char const*, TInterpreter::EErrorCode*) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#23 0x00002b4d65dc112a in TApplication::ProcessLine(char const*, bool, int*) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#24 0x00002b4d66de9539 in TRint::HandleTermInput() () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libRint.so
+#25 0x00002b4d65e9035c in TUnixSystem::CheckDescriptors() () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#26 0x00002b4d65e91aa6 in TUnixSystem::DispatchOneEvent(bool) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#27 0x00002b4d65e16036 in TSystem::InnerLoop() () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#28 0x00002b4d65e17c04 in TSystem::Run() () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#29 0x00002b4d65dbf52f in TApplication::Run(bool) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libCore.so
+#30 0x00002b4d66de9f17 in TRint::Run(bool) () from /afs/cern.ch/cms/slc5_amd64_gcc462/lcg/root/5.32.00-cms21/lib/libRint.so
+#31 0x000000000040116c in main ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash.
+If they do not help you then please submit a bug report at
+http://root.cern.ch/bugs. Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#5  _tj_set_jetinfo (_jets_index=0, jet=0x168bd070, this=0x7fff27aca090) at ClusterSequence_TiledN2.cc:205
+#6  fastjet::ClusterSequence::_minheap_faster_tiled_N2_cluster (this=0x7fff27aca090) at ClusterSequence_TiledN2.cc:744
+#7  0x00002b4d721fdba0 in fastjet::ClusterSequence::_initialise_and_run_no_decant (this=0x7fff27aca090) at ClusterSequence.cc:335
+#8  0x00002b4d722c1ac8 in fastjet::ClusterSequence::ClusterSequence<fastjet::PseudoJet> (this=0x7fff27aca090, pseudojets=std::vector of length 1661, capacity 2048 = {...}, jet_def_in=<optimized out>, writeout_combinations=<optimized out>) at /afs/cern.ch/cms/slc5_amd64_gcc462/external/fastjet/3.0.1-cms3/include/fastjet/ClusterSequence.hh:945
+#9  0x00002b4d73fda014 in readBacon() () from /afs/cern.ch/work/b/bmahakud/NewBaconFramework/CMSSW_5_3_13/src/BaconAna/DataFormats/tst/./readBacon_C.so
+===========================================================
+
