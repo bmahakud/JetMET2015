@@ -100,9 +100,10 @@ std::vector<fastjet::PseudoJet> particles; particles.clear();
         mAreaDefinition =new fastjet::AreaDefinition( fastjet::active_area_explicit_ghosts, fjActiveArea );
         fastjet::Selector selected_eta = fastjet::SelectorAbsEtaMax(2.4);
         
+        double R=0.8;//define the jet cone radius to use 
+        std::string JetAlgorithm = "AK"; //choose which jet algo to use , write AK for antikt, CA for Cambridge/Achen, KT for kt algo
         
-        
-        JetDefinition jet_def(antikt_algorithm,R[jjj]);
+        JetDefinition jet_def(antikt_algorithm,R);
 
 
       if (JetAlgorithm == "AK")jet_def.set_jet_algorithm( fastjet::antikt_algorithm );
@@ -113,19 +114,11 @@ std::vector<fastjet::PseudoJet> particles; particles.clear();
         fastjet::ClusterSequenceArea thisClustering_area(particles, jet_def, *mAreaDefinition);
         fastjet::ClusterSequence thisClustering_basic(particles, jet_def);
 
-        fastjet::ClusterSequenceArea thisClustering_gen_area(gen_particles, jet_def, *mAreaDefinition);
-        fastjet::ClusterSequence thisClustering_gen_basic(gen_particles, jet_def);
 
 
         std::vector<fastjet::PseudoJet> out_jets = sorted_by_pt( selected_eta(thisClustering_area.inclusive_jets(15.0)) );
         std::vector<fastjet::PseudoJet> out_jets_basic = sorted_by_pt( selected_eta(thisClustering_basic.inclusive_jets(15.0)) );
-   
-
-        std::vector<fastjet::PseudoJet> out_gen_jets = sorted_by_pt( selected_eta(thisClustering_gen_area.inclusive_jets(15.0)) );
-        std::vector<fastjet::PseudoJet> out_gen_jets_basic = sorted_by_pt( selected_eta(thisClustering_gen_basic.inclusive_jets(15.0)) );
-
-
-
+  
 
 
         fastjet::Filter trimmer(fastjet::Filter(fastjet::JetDefinition(fastjet::kt_algorithm,0.2),fastjet::SelectorPtFractionMin(0.03)));
@@ -135,8 +128,10 @@ std::vector<fastjet::PseudoJet> particles; particles.clear();
         fastjet::Pruner pruner(fastjet::cambridge_algorithm, 0.1, 0.5);
 
 
-
-
+//Now you can print the jet momentum , mass , pt etc like the following
+        for(int j=0;j<)out_jets.size();j++{
+        cout<<"jet pt = "<<out_jets.at(j).pt()<<endl;
+        }
 
 
 
