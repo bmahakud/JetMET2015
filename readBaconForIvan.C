@@ -129,7 +129,7 @@ std::vector<fastjet::PseudoJet> particles; particles.clear();
 
 
 //Now you can print the jet momentum , mass , pt etc like the following
-        for(int j=0;j<out_jets.size();j++{
+        for(int j=0;j<out_jets.size();j++){
         cout<<"jet pt = "<<out_jets.at(j).pt()<<endl;
          cout<<"jet eta = "<<out_jets.at(j).eta()<<endl;
           cout<<"jet phi = "<<out_jets.at(j).phi()<<endl;
