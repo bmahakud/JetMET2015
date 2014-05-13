@@ -19,7 +19,7 @@ void setup(){
    gSystem->Load("libFWCoreFWLite.so");
    AutoLibraryLoader::enable();
    gSystem->Load("libDataFormatsFWLite.so");
-   gSystem->Load("$CMSSW_BASE/src/fjcontrib-1.009/libfastjetcontribfragile.so");  
+    
    gSystem->Load("$CMSSW_BASE/lib/slc5_amd64_gcc462/libCondFormatsJetMETObjects.so");
 
 
