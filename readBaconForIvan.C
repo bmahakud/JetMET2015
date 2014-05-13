@@ -11,21 +11,12 @@
 #include "fastjet/tools/GridMedianBackgroundEstimator.hh"
 #include "fastjet/tools/Subtractor.hh"
 #include "fastjet/Selector.hh"
-#include "JetSubstructure/SubstructureTools/interface/PseudoJetUserInfo.h"
-#include "JetSubstructure/SubstructureTools/interface/Njettiness.hh"
-#include "JetSubstructure/SubstructureTools/interface/Nsubjettiness.hh"
-#include "JetSubstructure/SubstructureTools/src/QjetsPlugin.h"
+
 #include "fastjet/tools/Subtractor.hh"
 
 //#include "JetMETCorrections/Objects/interface/JetCorrector.h"
 //#include "JetSubstructure/SubstructureTools/interface/JetSubstructureTools.h"
-#if !defined(__CINT__) && !defined(__MAKECINT__)
-#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
-//#include "JetMETCorrections/Objects/interface/JetCorrector.h"
-#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
-//#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
-#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
-#endif
+
 #include "TFile.h"
 #include "TTree.h"
 #include "TClonesArray.h"
@@ -120,12 +111,6 @@ std::vector<fastjet::PseudoJet> particles; particles.clear();
         std::vector<fastjet::PseudoJet> out_jets_basic = sorted_by_pt( selected_eta(thisClustering_basic.inclusive_jets(15.0)) );
   
 
-
-        fastjet::Filter trimmer(fastjet::Filter(fastjet::JetDefinition(fastjet::kt_algorithm,0.2),fastjet::SelectorPtFractionMin(0.03)));
-
-        fastjet::Filter filter(fastjet::Filter(fastjet::JetDefinition(fastjet::cambridge_algorithm,0.3),fastjet::SelectorNHardest(3)));
-  
-        fastjet::Pruner pruner(fastjet::cambridge_algorithm, 0.1, 0.5);
 
 
 //Now you can print the jet momentum , mass , pt etc like the following
