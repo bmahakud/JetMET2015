@@ -8,7 +8,7 @@
 #include "TGraphErrors.h"
 using namespace std;
 
-void AnalysisTwoParVar(){
+void RMSVsnPV(){
 
 gStyle->SetOptStat(0000);
 
