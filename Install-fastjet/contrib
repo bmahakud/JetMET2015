@@ -18,7 +18,7 @@ cd CMSSW/src
 fastjet.hepforge.org/contrib/downloads/fjcontrib-1.014.tar.gz
 tar -xzvf fjcontrib-1.014.tar.gz
 cd fjcontrib-1.014
-./configure --fastjet-config=/cvmfs/cms.cern.ch/slc6_amd64_gcc481/external/fastjet/3.0.3-cms2/bin/fastjet-config
+./configure --fastjet-config=/cvmfs/cms.cern.ch/slc6_amd64_gcc481/external/fastjet/3.0.3-cms2/bin/fastjet-config --prefix=$PWD 
 make
 make check
 make install
