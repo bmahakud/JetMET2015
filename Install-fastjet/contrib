@@ -22,3 +22,5 @@ cd fjcontrib-1.014
 make
 make check
 make install
+make fragile-shared
+make fragile-shared-install
