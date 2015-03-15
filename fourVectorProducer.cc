@@ -87,6 +87,9 @@ fourVectorProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 		      << iPart->pz() << " " 
 		      << iPart->energy() << std::endl;
     }// end debug
+    
+    
+     std::cout<<"Jet Px = "<< iPart->px()<<std::endl;
    /*  
     TLorentzVector p4( iPart->px(), 
 		       iPart->py(), 
